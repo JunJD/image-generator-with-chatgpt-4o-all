@@ -1,8 +1,3 @@
-<a href="https://ai-sdk-image-generator.vercel.app">
-  <img alt="Next.js 14 和 App Router AI SDK 图像生成器" src="https://ai-sdk-image-generator.vercel.app/opengraph-image.png">
-  <h1 align="center">AI图像生成器</h1>
-</a>
-
 <p align="center">
   一个开源的AI图像生成应用，使用Next.js、AI SDK和OpenAI API构建。
 </p>
@@ -29,7 +24,7 @@
 - **gptgod.online**：主要API转发服务
 - **openai.linktre.cc**：备用API转发服务
 
-这些服务允许以更低的成本访问OpenAI的强大模型，特别是用于图像生成的DALL-E模型和多模态的GPT-4o模型。
+这些服务允许以更低的成本访问OpenAI的强大模型，特别是用于图像生成的DALL-E模型和多模态的chatgpt-4o模型(懂的都懂)。
 
 ## 部署指南
 
