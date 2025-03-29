@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { TypewriterEffect } from "@/components/ui/typewriter-effect";
 
 const SparklesIcon = ({ size = 18 }) => {
   return (
@@ -35,28 +36,25 @@ export const Header = () => {
         <div>
           <h1 className="text-xl flex sm:text-2xl sm:font-bold antialiased font-semibold">
             <Link
-              href="https://sdk.vercel.ai"
+              href="#"
               className="flex items-center mr-2 hover:opacity-75"
-              target="_blank"
             >
               <SparklesIcon />
-              AI SDK
+              <TypewriterEffect words={[{ text: "AI" },{ text: "图像" },{ text: "生成器" }]} className="text-xl sm:text-2xl" />
             </Link>
-            Image Generator
           </h1>
         </div>
-        <Link
-          href={`https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fai-sdk-image-generator&env=FIREWORKS_API_KEY,GOOGLE_CLIENT_EMAIL,GOOGLE_PRIVATE_KEY_ID,GOOGLE_VERTEX_LOCATION,GOOGLE_VERTEX_PROJECT,OPENAI_API_KEY,REPLICATE_API_TOKEN&envDescription=AI%20Provider%20API%20keys%20required%20for%20this%20demo.&envLink=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fai-sdk-image-generator&demo-title=AI%20SDK%20Image%20Generator&demo-description=%20%20An%20open-source%20AI%20image%20generation%20app%20template%20built%20with%20Next.js%2C%20the%20AI%20SDK%20by%20Vercel%2C%20and%20various%20AI%20providers%20(Replicate%2C%20Fireworks%2C%20Google%20Vertex%20AI%2C%20OpenAI).&demo-url=https%3A%2F%2Fai-sdk-image-generator.vercel.app%2F&demo-image=https%3A%2F%2Fai-sdk-image-generator.vercel.app%2Fopengraph-image.png`}
-          target="_blank"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="https://vercel.com/button"
-            className="hidden sm:block"
-            alt="Deploy with Vercel"
-          />
-          <Button size="iconSm" className="block sm:hidden">
-            ▲
+        <Link href="https://github.com/JunJD/image-generator-with-chatgpt-4o-all" target="_blank">
+          <Button className="hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            <svg 
+              viewBox="0 0 24 24" 
+              width="16" 
+              height="16" 
+              className="mr-2"
+            >
+              <path fill="currentColor" d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+            GitHub
           </Button>
         </Link>
       </div>
