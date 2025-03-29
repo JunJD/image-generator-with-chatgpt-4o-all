@@ -1,8 +1,9 @@
 import { ImagePlayground } from "@/components/ImagePlayground";
-import { getRandomSuggestions } from "@/lib/suggestions";
+import { getSuggestionsByStyle, STYLE_NAMES } from "@/lib/suggestions";
 
 export const dynamic = "force-dynamic";
 
 export default function Page() {
-  return <ImagePlayground suggestions={getRandomSuggestions()} />;
+  // 默认使用宫崎骏风格
+  return <ImagePlayground suggestions={getSuggestionsByStyle(STYLE_NAMES.MIYAZAKI)} />;
 }

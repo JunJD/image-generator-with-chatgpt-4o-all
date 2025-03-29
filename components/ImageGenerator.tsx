@@ -81,7 +81,7 @@ export function ImageGenerator({
       </div>
 
       {/* Mobile layout: Carousel */}
-      {/* <div className="sm:hidden">
+      <div className="sm:hidden">
         <ImageCarousel
           providers={PROVIDER_ORDER}
           images={images}
@@ -90,7 +90,7 @@ export function ImageGenerator({
           enabledProviders={enabledProviders}
           providerToModel={initializeProviderRecord<string>()}
         />
-      </div> */}
+      </div>
 
       {/* Desktop layout: Grid */}
       <div className="hidden sm:grid gap-6">

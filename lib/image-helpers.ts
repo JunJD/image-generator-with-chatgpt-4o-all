@@ -18,11 +18,35 @@ export const imageHelpers = {
 
   shareOrDownload: async (
     imageData: string,
-    provider: string
+    provider: string,
+    isImageUrl = false
   ): Promise<void> => {
     const fileName = imageHelpers.generateImageFileName(provider);
-    const blob = imageHelpers.base64ToBlob(imageData);
-    const file = new File([blob], `${fileName}.png`, { type: "image/png" });
+    
+    let blob: Blob;
+    let file: File;
+    
+    if (isImageUrl) {
+      // 处理图片 URL
+      try {
+        const response = await fetch(imageData);
+        if (!response.ok) {
+          throw new Error(`获取图片失败: ${response.status}`);
+        }
+        
+        blob = await response.blob();
+        const fileType = blob.type || "image/png";
+        const fileExtension = fileType.split('/').pop() || "png";
+        file = new File([blob], `${fileName}.${fileExtension}`, { type: fileType });
+      } catch (error) {
+        console.error("获取图片数据失败:", error);
+        throw error;
+      }
+    } else {
+      // 处理 base64 数据
+      blob = imageHelpers.base64ToBlob(imageData);
+      file = new File([blob], `${fileName}.png`, { type: "image/png" });
+    }
 
     try {
       if (navigator.share) {
@@ -39,7 +63,7 @@ export const imageHelpers = {
       const blobUrl = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = blobUrl;
-      link.download = `${fileName}.png`;
+      link.download = `${fileName}.${file.name.split('.').pop() || "png"}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import React from "react";
 import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,8 @@ export function ImageDisplay({
   modelId,
 }: ImageDisplayProps) {
   const [isZoomed, setIsZoomed] = useState(false);
+  const markdownRef = useRef<HTMLDivElement>(null);
+  const zoomedMarkdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isZoomed) {
@@ -71,13 +73,27 @@ export function ImageDisplay({
 
   const handleActionClick = (
     e: React.MouseEvent,
-    imageData: string,
+    markdown: string,
     provider: string,
   ) => {
     e.stopPropagation();
-    imageHelpers.shareOrDownload(imageData, provider).catch((error) => {
-      console.error("Failed to share/download image:", error);
-    });
+    
+    // 尝试从当前渲染的 markdown 中获取图片
+    const ref = isZoomed ? zoomedMarkdownRef : markdownRef;
+    const imgElement = ref.current?.querySelector('img');
+    
+    if (imgElement && imgElement.src) {
+      // 如果找到图片元素，使用其 URL
+      imageHelpers.shareOrDownload(imgElement.src, provider, true).catch((error) => {
+        console.error("下载/分享图片失败:", error);
+      });
+    } else {
+      // 如果没有找到图片元素，退回到使用原始 markdown
+      console.warn("未找到图片元素，尝试使用原始 markdown 数据");
+      imageHelpers.shareOrDownload(markdown, provider).catch((error) => {
+        console.error("下载/分享图片失败:", error);
+      });
+    }
   };
 
   return (
@@ -108,7 +124,7 @@ export function ImageDisplay({
         )}
         {markdown && !failed ? (
           <>
-            <div className="w-full h-full flex items-center justify-center">
+            <div className="w-full h-full flex items-center justify-center" ref={markdownRef}>
               <ReactMarkdown 
                 rehypePlugins={[rehypeRaw, rehypeSanitize]}
                 remarkPlugins={[remarkGfm]}
@@ -130,7 +146,6 @@ export function ImageDisplay({
               >
                 {markdown}
               </ReactMarkdown>
-
             </div>
             <Button
               size="icon"
@@ -217,6 +232,7 @@ export function ImageDisplay({
             <div 
               className="bg-white dark:bg-zinc-900 rounded-lg max-h-[90dvh] max-w-[90vw] overflow-auto" 
               onClick={(e) => e.stopPropagation()}
+              ref={zoomedMarkdownRef}
             >
               <ReactMarkdown 
                 rehypePlugins={[rehypeRaw, rehypeSanitize]}

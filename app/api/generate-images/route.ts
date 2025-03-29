@@ -28,7 +28,7 @@ const withTimeout = <T>(
 
 export async function POST(req: NextRequest) {
   const requestId = Math.random().toString(36).substring(7);
-  const { prompt, provider, modelId } =
+  const { prompt, provider, modelId, uploadedImage } =
     (await req.json()) as GenerateImageRequest;
 
   try {
@@ -40,6 +40,30 @@ export async function POST(req: NextRequest) {
 
     const startstamp = performance.now();
 
+    // 准备提示词 - 这里我们直接使用传入的prompt，现在它已经包含了风格信息
+    const enhancedPrompt = uploadedImage 
+      ? `${prompt} The input image is the reference. Please preserve the main subjects, composition and content from the original image, but transform its visual style as specified.` 
+      : prompt;
+    
+    // 准备消息内容数组
+    let contentItems: any[] = [
+      {
+        type: "text",
+        text: enhancedPrompt,
+      }
+    ];
+
+    // 如果有上传的图片，添加到消息内容中
+    if (uploadedImage) {
+      contentItems.push({
+        type: "image_url",
+        image_url: {
+          url: uploadedImage,
+        }
+      });
+      console.log(`请求包含上传的图片 [requestId=${requestId}]`);
+    }
+
     // 使用OpenAI的chat.completions接口进行多模态处理
     const generatePromise = openai.chat.completions.create({
       model: "gpt-4o-image",
@@ -47,27 +71,15 @@ export async function POST(req: NextRequest) {
       messages: [
         {
           role: "user",
-          content: [
-            {
-              type: "text",
-              text: `A Ghibli-style portrait of a person based on a detailed appearance description, whimsical and soft colors, intricate background with nature elements`,
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: "https://filesystem.site/cdn/20250329/HF96hKiD9wgDx0wJocaefTlUSPYveh.jpeg",
-              }
-            }
-          ],
+          content: contentItems,
         },
       ],
+      max_tokens: 1000,
     }).then(response => {
       const elapsed = (performance.now() - startstamp) / 1000;
       console.log(
-        `多模态处理完成 [requestId=${requestId}, provider=${provider}, model=${modelId || "gpt-4o"}, elapsed=${elapsed.toFixed(1)}s].`
+        `多模态处理完成 [requestId=${requestId}, provider=${provider}, model=${modelId || "gpt-4o-mini"}, elapsed=${elapsed.toFixed(1)}s].`
       );
-
-      console.log('OpenAI响应结构:', response);
 
       // 从响应中获取文本内容
       const textContent = response.choices[0]?.message?.content;

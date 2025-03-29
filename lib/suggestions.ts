@@ -3,136 +3,47 @@ export interface Suggestion {
   prompt: string;
 }
 
-const artStyles = ["anime", "art nouveau", "ukiyo-e", "watercolor"];
+// 定义艺术风格常量
+export const STYLE_NAMES = {
+  NONE: "无风格",      // No style
+  MIYAZAKI: "宫崎骏",  // Miyazaki Hayao style
+  PIXAR: "皮克斯",     // Pixar style
+  LEGO: "乐高",        // Lego style
+  ANIME: "动漫",       // Anime style
+  SHINKAI: "新海诚",   // Makoto Shinkai style
+  DISNEY: "迪士尼",    // Disney style
+  OILPAINTING: "油画", // Oil painting style
+  CUSTOM: "自定义",    // Custom style
+};
 
-const basePrompts: { text: string; prompt: string }[] = [
-  {
-    text: "Salamander Dusk",
-    prompt: "A salamander at dusk in a forest pond",
-  },
-  {
-    text: "Sultry Chicken",
-    prompt:
-      "A sultry chicken peering around the corner from shadows, clearly up to no good",
-  },
-  {
-    text: "Cat Vercel",
-    prompt: "A cat launching its website on Vercel",
-  },
-  {
-    text: "Red Panda",
-    prompt:
-      "A red panda sipping tea under cherry blossoms at sunset with Mount Fuji in the background",
-  },
-  {
-    text: "Beach Otter",
-    prompt: "A mischievous otter surfing the waves in Bali at golden hour",
-  },
-  {
-    text: "Badger Ramen",
-    prompt: "A pensive honey badger eating a bowl of ramen in Osaka",
-  },
-  {
-    text: "Zen Frog",
-    prompt:
-      "A frog meditating on a lotus leaf in a tranquil forest pond at dawn, surrounded by fireflies",
-  },
-  {
-    text: "Macaw Love",
-    prompt:
-      "A colorful macaw delivering a love letter, flying over the Grand Canyon at sunrise",
-  },
-  {
-    text: "Fox Painting",
-    prompt: "A fox walking through a field of lavender with a golden sunset",
-  },
-  {
-    text: "Armadillo Aerospace",
-    prompt:
-      "An armadillo in a rocket at countdown preparing to blast off to Mars",
-  },
-  {
-    text: "Penguin Delight",
-    prompt: "A penguin in pajamas eating ice cream while watching television",
-  },
-  {
-    text: "Echidna Library",
-    prompt:
-      "An echidna reading a book in a cozy library built into the branches of a eucalyptus tree",
-  },
-  {
-    text: "Capybara Onsen",
-    prompt:
-      "A capybara relaxing in a hot spring surrounded by snow-covered mountains with a waterfall in the background",
-  },
-  {
-    text: "Lion Throne",
-    prompt:
-      "A regal lion wearing a crown, sitting on a throne in a jungle palace, with waterfalls in the distance",
-  },
-  {
-    text: "Dolphin Glow",
-    prompt:
-      "A dolphin leaping through a glowing ring of bioluminescence under a starry sky",
-  },
-  {
-    text: "Owl Detective",
-    prompt:
-      "An owl wearing a monocle and top hat, solving a mystery in a misty forest at midnight",
-  },
-  {
-    text: "Jellyfish Cathedral",
-    prompt:
-      "A jellyfish floating gracefully in an underwater cathedral made of coral and glass",
-  },
-  {
-    text: "Platypus River",
-    prompt: "A platypus foraging in a river with a sunset in the background",
-  },
-  {
-    text: "Chameleon Urban",
-    prompt:
-      "A chameleon blending into a graffiti-covered wall in an urban jungle",
-  },
-  {
-    text: "Tortoise Oasis",
-    prompt:
-      "A giant tortoise slowly meandering its way to an oasis in the desert",
-  },
-  {
-    text: "Hummingbird Morning",
-    prompt:
-      "A hummingbird sipping nectar from a purple bougainvillea at sunrise, captured mid-flight",
-  },
-  {
-    text: "Polar Bear",
-    prompt:
-      "A polar bear clambering onto an iceberg to greet a friendly harbor seal as dusk falls",
-  },
-  {
-    text: "Lemur Sunbathing",
-    prompt:
-      "A ring-tailed lemur sunbathing on a rock in Madagascar in early morning light",
-  },
-];
+// 艺术风格对应的英文描述(取代basePrompts)
+export const STYLE_PROMPTS = {
+  [STYLE_NAMES.NONE]: "Keep the content of the original image but enhance its quality and details. Maintain the same composition, subjects, and elements from the uploaded image.",
+  [STYLE_NAMES.MIYAZAKI]: "Transform the uploaded image into Studio Ghibli and Hayao Miyazaki style, with soft colors and dreamy landscapes. Maintain all the key subjects and composition from the original image.",
+  [STYLE_NAMES.PIXAR]: "Convert the uploaded image into Pixar animation style, with vibrant colors and expressive characters. Preserve all the key elements and composition from the original image.",
+  [STYLE_NAMES.LEGO]: "Recreate the uploaded image as if made of LEGO bricks, with colorful plastic blocks. Keep all key subjects and composition from the original image intact.",
+  [STYLE_NAMES.ANIME]: "Transform the uploaded image into anime style, with vibrant colors and expressive characters. Maintain all key subjects and composition from the original image.",
+  [STYLE_NAMES.SHINKAI]: "Convert the uploaded image to Makoto Shinkai style, with photorealistic backgrounds and atmospheric lighting. Preserve all key elements and composition from the original image.",
+  [STYLE_NAMES.DISNEY]: "Transform the uploaded image into Disney animation style, with cheerful characters and enchanting scenery. Keep all key subjects and composition from the original image.",
+  [STYLE_NAMES.OILPAINTING]: "Recreate the uploaded image as an oil painting, with textured brushstrokes and classical composition. Maintain all the key elements and composition from the original image.",
+  [STYLE_NAMES.CUSTOM]: "",
+};
 
-function shuffle<T>(array: T[]): T[] {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+// 获取提示函数，直接返回风格提示
+export function getSuggestionsByStyle(style: string): Suggestion[] {
+  const stylePrompt = STYLE_PROMPTS[style as keyof typeof STYLE_PROMPTS] || "";
+  
+  if (!stylePrompt && style !== STYLE_NAMES.CUSTOM) {
+    return [{ text: "默认提示", prompt: "Recreate the uploaded image with enhanced quality while preserving all original content and composition." }];
   }
-  return shuffled;
+  
+  return [{
+    text: style,
+    prompt: stylePrompt
+  }];
 }
 
-export function getRandomSuggestions(count: number = 5): Suggestion[] {
-  const shuffledPrompts = shuffle(basePrompts);
-  const shuffledStyles = shuffle(artStyles);
-
-  return shuffledPrompts.slice(0, count).map((item, index) => ({
-    text: item.text,
-    prompt: `${item.prompt}, in the style of ${
-      shuffledStyles[index % shuffledStyles.length]
-    }`,
-  }));
+// 保留原有函数，但使用默认风格（宫崎骏）
+export function getRandomSuggestions(): Suggestion[] {
+  return getSuggestionsByStyle(STYLE_NAMES.MIYAZAKI);
 }

@@ -28,6 +28,8 @@ export function ImagePlayground({
     isLoading,
     startGeneration,
     activePrompt,
+    uploadedImage,
+    setUploadedImage,
   } = useImageGeneration();
 
   const [showProviders, setShowProviders] = useState(true);
@@ -83,6 +85,8 @@ export function ImagePlayground({
           mode={mode}
           onModeChange={handleModeChange}
           suggestions={suggestions}
+          onImageUpload={setUploadedImage}
+          uploadedImage={uploadedImage}
         />
         <>
           {(() => {

@@ -8,6 +8,8 @@ interface UseImageGenerationReturn {
   timings: Record<ProviderKey, ProviderTiming>;
   failedProviders: ProviderKey[];
   isLoading: boolean;
+  uploadedImage: string | null;
+  setUploadedImage: (imageBase64: string | null) => void;
   startGeneration: (
     prompt: string,
     providers: ProviderKey[],
@@ -26,6 +28,7 @@ export function useImageGeneration(): UseImageGenerationReturn {
   const [failedProviders, setFailedProviders] = useState<ProviderKey[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [activePrompt, setActivePrompt] = useState("");
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
 
   const resetState = () => {
     setImages([]);
@@ -75,6 +78,7 @@ export function useImageGeneration(): UseImageGenerationReturn {
             prompt,
             provider,
             modelId,
+            uploadedImage,
           };
 
           const response = await fetch("/api/generate-images", {
@@ -157,6 +161,8 @@ export function useImageGeneration(): UseImageGenerationReturn {
     timings,
     failedProviders,
     isLoading,
+    uploadedImage,
+    setUploadedImage,
     startGeneration,
     resetState,
     activePrompt,
