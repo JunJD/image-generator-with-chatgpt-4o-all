@@ -1,0 +1,167 @@
+# React Native/Expo Project
+
+You are an expert in TypeScript, React, Aceternity UI, and shadcn UI development with tailwindcss.
+
+Every time you choose to apply a rule(s), explicitly state the rule(s) in the output. You can abbreviate the rule description to a single word or phrase.
+
+## Project Context
+
+## Code Style and Structure
+
+- Write concise, technical TypeScript code with accurate examples
+- Use functional and declarative programming patterns; avoid classes
+- Prefer iteration and modularization over code duplication
+- Use descriptive variable names with auxiliary verbs (e.g., isLoading, hasError)
+- Ensure components are modular, reusable, and maintainable.
+- Component Modularity: Break down components into smaller, reusable pieces. Keep components focused on a single responsibility and shouldn't be more than 80 lines of code.
+- To install new packages use `pnpm add <package-name>`
+- To install new components with Aceternity UI  packages use `npx shadcn@latest add https://ui.aceternity.com/registry/[component].json`
+- Structure repository files as follows:
+
+```
+src
+  ├── app   ## the main entry point for nextjs router(file-based routing)
+  ├── components  ## shared components
+  │   └── ui  ## core ui components. buttons, inputs, etc
+  ├── lib  ## shared libraries, api-types, image-helpers, hooks, image-types, suggestions, utils
+
+```
+
+## Tech Stack
+
+- nextjs
+- React
+- TypeScript
+- Tailwind CSS
+- Aceternity UI
+- framer-motion
+- zustand
+
+## Naming Conventions
+
+- Favor named exports for components and utilities
+- Use kebabCase for all files names and directories (e.g., visa-form.tsx)
+
+## TypeScript Usage
+
+- Use TypeScript for all code; prefer types over interfaces
+- Avoid enums; use const objects with 'as const' assertion
+- Use functional components with TypeScript interfaces
+- Define strict types for message passing between different parts of the extension
+- Use absolute imports for all files @/...
+- Avoid try/catch blocks unless there's good reason to translate or handle error in that abstraction
+- Use explicit return types for all functions
+
+## State Management
+
+- Use React Zustand for global state management
+- Implement proper cleanup in useEffect hooks
+
+## Syntax and Formatting
+
+- Use "function" keyword for pure functions
+- Avoid unnecessary curly braces in conditionals
+- Use declarative JSX
+- Implement proper TypeScript discriminated unions for message types
+
+## UI and Styling
+
+- 使用 Tailwind CSS 进行样式设计
+- 优先使用 Aceternity UI 组件库 (https://ui.aceternity.com/components) 中的预构建组件
+- 常用组件包括：
+  - 动画组件：`AnimatedModal`, `AnimatedTooltip`, `TextGenerateEffect`
+  - 布局组件：`BentoGrid`, `Container`, `LayoutGrid`
+  - 交互组件：`HoverEffect`, `Spotlight`, `CardHoverEffect`
+  - 背景组件：`AuroraBackground`, `BackgroundBeams`, `GlowingStars`
+- 通过以下命令安装 Aceternity UI 组件：`npx shadcn@latest add https://ui.aceternity.com/registry/[component].json`
+- 确保遵循高可访问性(a11y)标准，使用适当的 ARIA 角色和原生可访问性属性
+- 使用 `framer-motion` 实现流畅、专业的动画效果
+- 避免不必要的重新渲染，适当使用 `useMemo` 和 `useCallback` 钩子
+- 确保使用 tailwind 配置文件中定义的颜色和字体
+
+以下是使用 Aceternity UI 组件的简单示例：
+
+```tsx
+import * as React from 'react';
+import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
+import { 
+  TextGenerateEffect, 
+  CardHoverEffect, 
+  SparklesCore 
+} from "@/components/ui/aceternity";
+
+type Props = {
+  title: string;
+  items: Array<{
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+  }>;
+};
+
+export function FeatureSection({ title, items }: Props) {
+  return (
+    <div className="container mx-auto px-4 py-12">
+      <TextGenerateEffect
+        words={title}
+        className="text-3xl font-bold text-center mb-10"
+      />
+      
+      <BentoGrid className="max-w-4xl mx-auto">
+        {items.map((item, i) => (
+          <BentoGridItem
+            key={i}
+            title={item.title}
+            description={item.description}
+            icon={item.icon}
+            className="border border-neutral-200 dark:border-neutral-800"
+          />
+        ))}
+      </BentoGrid>
+      
+      <div className="relative h-40 w-full mt-12">
+        <SparklesCore
+          background="transparent"
+          minSize={0.4}
+          maxSize={1}
+          particleDensity={70}
+          className="w-full h-full"
+          particleColor="#FFFFFF"
+        />
+      </div>
+    </div>
+  );
+}
+```
+
+## Error Handling
+
+- Log errors appropriately for debugging
+- Provide user-friendly error messages
+
+## Git Usage
+
+Commit Message Prefixes:
+
+- "fix:" for bug fixes
+- "feat:" for new features
+- "perf:" for performance improvements
+- "docs:" for documentation changes
+- "style:" for formatting changes
+- "refactor:" for code refactoring
+- "test:" for adding missing tests
+- "chore:" for maintenance tasks
+
+Rules:
+
+- Use lowercase for commit messages
+- Keep the summary line concise with a maximum of 100 characters
+- Reference issue numbers when applicable
+
+## Documentation
+
+- Maintain clear README with the following sections:
+  - Setup ( how to install and run the project )
+  - Usage ( listing all the commands and how to use them )
+  - Stack ( the tech stack used in the project )
+  - Folder Structure ( the folder structure of the project only the important ones inside src )

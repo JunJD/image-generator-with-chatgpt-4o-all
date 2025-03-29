@@ -2,13 +2,13 @@ import { ProviderKey } from "./provider-config";
 
 export interface GeneratedImage {
   provider: ProviderKey;
-  image: string | null;
+  markdown: string | null;
   modelId?: string;
 }
 
 export interface ImageResult {
   provider: ProviderKey;
-  image: string | null;
+  markdown: string | null;
   modelId?: string;
 }
 

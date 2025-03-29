@@ -31,7 +31,7 @@ interface ModelSelectProps {
   color: string;
   enabled?: boolean;
   onToggle?: (enabled: boolean) => void;
-  image: string | null | undefined;
+  markdown: string | null | undefined;
   timing?: ProviderTiming;
   failed?: boolean;
   modelId: string;
@@ -39,16 +39,10 @@ interface ModelSelectProps {
 
 const PROVIDER_ICONS = {
   openai: OpenAIIcon,
-  replicate: ReplicateIcon,
-  vertex: VertexIcon,
-  fireworks: FireworksIcon,
 } as const;
 
 const PROVIDER_LINKS = {
   openai: "openai",
-  replicate: "replicate",
-  vertex: "google-vertex",
-  fireworks: "fireworks",
 } as const;
 
 export function ModelSelect({
@@ -58,7 +52,7 @@ export function ModelSelect({
   providerKey,
   onChange,
   enabled = true,
-  image,
+  markdown,
   timing,
   failed,
   modelId,
@@ -141,7 +135,7 @@ export function ModelSelect({
         <ImageDisplay
           modelId={modelId}
           provider={providerKey}
-          image={image}
+          markdown={markdown}
           timing={timing}
           failed={failed}
         />

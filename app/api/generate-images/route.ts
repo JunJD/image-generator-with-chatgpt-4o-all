@@ -1,44 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ImageModel, experimental_generateImage as generateImage } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { fireworks } from "@ai-sdk/fireworks";
-import { replicate } from "@ai-sdk/replicate";
-import { vertex } from "@ai-sdk/google-vertex/edge";
-import { ProviderKey } from "@/lib/provider-config";
+import OpenAI from "openai";
 import { GenerateImageRequest } from "@/lib/api-types";
 
 /**
- * Intended to be slightly less than the maximum execution time allowed by the
- * runtime so that we can gracefully terminate our request.
+ * 设置比运行时最大执行时间略小的超时时间，以便优雅地终止请求
  */
-const TIMEOUT_MILLIS = 55 * 1000;
+const TIMEOUT_MILLIS = 60 * 5 * 1000;
 
-const DEFAULT_IMAGE_SIZE = "1024x1024";
-const DEFAULT_ASPECT_RATIO = "1:1";
+// 初始化OpenAI客户端
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+  baseURL: process.env.OPENAI_BASE_URL,
+});
 
-interface ProviderConfig {
-  createImageModel: (modelId: string) => ImageModel;
-  dimensionFormat: "size" | "aspectRatio";
-}
-
-const providerConfig: Record<ProviderKey, ProviderConfig> = {
-  openai: {
-    createImageModel: openai.image,
-    dimensionFormat: "size",
-  },
-  fireworks: {
-    createImageModel: fireworks.image,
-    dimensionFormat: "aspectRatio",
-  },
-  replicate: {
-    createImageModel: replicate.image,
-    dimensionFormat: "size",
-  },
-  vertex: {
-    createImageModel: vertex.image,
-    dimensionFormat: "aspectRatio",
-  },
-};
 
 const withTimeout = <T>(
   promise: Promise<T>,
@@ -58,59 +32,71 @@ export async function POST(req: NextRequest) {
     (await req.json()) as GenerateImageRequest;
 
   try {
-    if (!prompt || !provider || !modelId || !providerConfig[provider]) {
-      const error = "Invalid request parameters";
+    if (!prompt || provider !== "openai") {
+      const error = "无效请求参数，目前仅支持OpenAI提供商";
       console.error(`${error} [requestId=${requestId}]`);
       return NextResponse.json({ error }, { status: 400 });
     }
 
-    const config = providerConfig[provider];
     const startstamp = performance.now();
-    const generatePromise = generateImage({
-      model: config.createImageModel(modelId),
-      prompt,
-      ...(config.dimensionFormat === "size"
-        ? { size: DEFAULT_IMAGE_SIZE }
-        : { aspectRatio: DEFAULT_ASPECT_RATIO }),
-      ...(provider !== "openai" && {
-        seed: Math.floor(Math.random() * 1000000),
-      }),
-      // Vertex AI only accepts a specified seed if watermark is disabled.
-      providerOptions: { vertex: { addWatermark: false } },
-    }).then(({ image, warnings }) => {
-      if (warnings?.length > 0) {
-        console.warn(
-          `Warnings [requestId=${requestId}, provider=${provider}, model=${modelId}]: `,
-          warnings
-        );
-      }
+
+    // 使用OpenAI的chat.completions接口进行多模态处理
+    const generatePromise = openai.chat.completions.create({
+      model: "gpt-4o-image",
+      stream: false,
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: `A Ghibli-style portrait of a person based on a detailed appearance description, whimsical and soft colors, intricate background with nature elements`,
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: "https://filesystem.site/cdn/20250329/HF96hKiD9wgDx0wJocaefTlUSPYveh.jpeg",
+              }
+            }
+          ],
+        },
+      ],
+    }).then(response => {
+      const elapsed = (performance.now() - startstamp) / 1000;
       console.log(
-        `Completed image request [requestId=${requestId}, provider=${provider}, model=${modelId}, elapsed=${(
-          (performance.now() - startstamp) /
-          1000
-        ).toFixed(1)}s].`
+        `多模态处理完成 [requestId=${requestId}, provider=${provider}, model=${modelId || "gpt-4o"}, elapsed=${elapsed.toFixed(1)}s].`
       );
 
+      console.log('OpenAI响应结构:', response);
+
+      // 从响应中获取文本内容
+      const textContent = response.choices[0]?.message?.content;
+      if (!textContent) {
+        throw new Error("OpenAI未返回有效文本响应");
+      }
+      
       return {
         provider,
-        image: image.base64,
+        markdown: textContent,
+        metadata: {
+          ...response,
+          elapsed,
+        }
       };
     });
 
     const result = await withTimeout(generatePromise, TIMEOUT_MILLIS);
     return NextResponse.json(result, {
-      status: "image" in result ? 200 : 500,
+      status: "markdown" in result ? 200 : 500,
     });
-  } catch (error) {
-    // Log full error detail on the server, but return a generic error message
-    // to avoid leaking any sensitive information to the client.
+  } catch (error: any) {
     console.error(
-      `Error generating image [requestId=${requestId}, provider=${provider}, model=${modelId}]: `,
+      `多模态处理错误 [requestId=${requestId}, provider=${provider}, model=${modelId}]: `,
       error
     );
     return NextResponse.json(
       {
-        error: "Failed to generate image. Please try again later.",
+        error: "多模态处理失败，请稍后重试。" + (process.env.NODE_ENV === "development" ? ` 错误: ${error.message}` : ""),
       },
       { status: 500 }
     );

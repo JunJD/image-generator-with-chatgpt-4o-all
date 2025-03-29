@@ -60,10 +60,7 @@ export function ImagePlayground({
   };
 
   const providerToModel = {
-    replicate: selectedModels.replicate,
-    vertex: selectedModels.vertex,
     openai: selectedModels.openai,
-    fireworks: selectedModels.fireworks,
   };
 
   const handlePromptSubmit = (newPrompt: string) => {
@@ -93,7 +90,7 @@ export function ImagePlayground({
               (Object.keys(PROVIDERS) as ProviderKey[]).map((key) => {
                 const provider = PROVIDERS[key];
                 const imageItem = images.find((img) => img.provider === key);
-                const imageData = imageItem?.image;
+                const imageData = imageItem?.markdown;
                 const modelId = imageItem?.modelId ?? "N/A";
                 const timing = timings[key];
 
@@ -109,7 +106,7 @@ export function ImagePlayground({
                   enabled: enabledProviders[key],
                   onToggle: (enabled: boolean) =>
                     handleProviderToggle(key, enabled),
-                  image: imageData,
+                  markdown: imageData,
                   modelId,
                   timing,
                   failed: failedProviders.includes(key),
@@ -121,7 +118,7 @@ export function ImagePlayground({
                 <div className="md:hidden">
                   <ModelCardCarousel models={getModelProps()} />
                 </div>
-                <div className="hidden md:grid md:grid-cols-2 2xl:grid-cols-4 gap-8">
+                <div className="hidden md:grid gap-8">
                   {getModelProps().map((props) => (
                     <ModelSelect key={props.label} {...props} />
                   ))}

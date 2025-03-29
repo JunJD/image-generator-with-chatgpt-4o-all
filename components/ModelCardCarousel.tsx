@@ -25,7 +25,7 @@ interface ModelCardCarouselProps {
     enabled?: boolean;
     onToggle?: (enabled: boolean) => void;
     onChange: (value: string, providerKey: ProviderKey) => void;
-    image: string | null | undefined;
+    markdown: string | null | undefined;
     timing?: ProviderTiming;
     failed?: boolean;
     modelId: string;

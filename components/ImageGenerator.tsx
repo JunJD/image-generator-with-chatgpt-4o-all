@@ -81,7 +81,7 @@ export function ImageGenerator({
       </div>
 
       {/* Mobile layout: Carousel */}
-      <div className="sm:hidden">
+      {/* <div className="sm:hidden">
         <ImageCarousel
           providers={PROVIDER_ORDER}
           images={images}
@@ -90,19 +90,19 @@ export function ImageGenerator({
           enabledProviders={enabledProviders}
           providerToModel={initializeProviderRecord<string>()}
         />
-      </div>
+      </div> */}
 
       {/* Desktop layout: Grid */}
-      <div className="hidden sm:grid sm:grid-cols-2 2xl:grid-cols-4 gap-6">
+      <div className="hidden sm:grid gap-6">
         {PROVIDER_ORDER.map((provider) => {
           const imageItem = images.find((img) => img.provider === provider);
-          const imageData = imageItem?.image;
+          const markdown = imageItem?.markdown;
           const timing = timings[provider];
           return (
             <ImageDisplay
               key={provider}
               provider={provider}
-              image={imageData}
+              markdown={markdown}
               timing={timing}
               failed={failedProviders.includes(provider)}
               enabled={enabledProviders[provider]}
