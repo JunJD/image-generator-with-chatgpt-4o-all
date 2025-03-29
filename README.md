@@ -108,12 +108,3 @@ OPENAI_BASE_URL=API基础URL（如果使用路由转发服务）
        }],
    });
    ```
-
-## 作者
-
-这个仓库由[Vercel](https://vercel.com)团队和社区贡献者维护。特别感谢：
-
-- Walter Korman ([@shaper](https://x.com/shaper)) - [Vercel](https://vercel.com)
-- Nico Albanese ([@nicoalbanese10](https://x.com/nicoalbanese10)) - [Vercel](https://vercel.com)
-
-欢迎贡献！请随时提出问题或提交拉取请求以增强功能或修复错误。
