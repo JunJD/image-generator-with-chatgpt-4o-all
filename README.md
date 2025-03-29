@@ -1,4 +1,8 @@
 <p align="center">
+  <h1 align="center">AI图像生成器</h1>
+</p>
+
+<p align="center">
   一个开源的AI图像生成应用，使用Next.js、AI SDK和OpenAI API构建。
 </p>
 
@@ -8,6 +12,12 @@
   <a href="#部署指南"><strong>部署指南</strong></a> ·
   <a href="#本地运行"><strong>本地运行</strong></a> ·
   <a href="#开发路线图"><strong>开发路线图</strong></a>
+</p>
+
+<p align="center">
+  <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FJunJD%2Fimage-generator-with-chatgpt-4o-all&env=OPENAI_API_KEY,OPENAI_BASE_URL&project-name=ai-image-generator&repo-name=ai-image-generator">
+    <img src="https://vercel.com/button" alt="Deploy with Vercel"/>
+  </a>
 </p>
 <br/>
 
@@ -38,6 +48,12 @@ OPENAI_BASE_URL=API基础URL（如果使用路由转发服务）
 ```
 
 ### Vercel部署
+
+1. 点击上方的"Deploy with Vercel"按钮
+2. 根据提示设置必要的环境变量
+3. 完成部署
+
+或者您可以手动部署：
 
 1. Fork [此仓库](https://github.com/JunJD/image-generator-with-chatgpt-4o-all) 到您的GitHub账户
 2. 在Vercel上创建新项目，选择您fork的仓库
