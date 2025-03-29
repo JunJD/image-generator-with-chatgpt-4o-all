@@ -60,6 +60,37 @@ OPENAI_BASE_URL=API基础URL（如果使用路由转发服务）
 3. 在Vercel项目设置中添加上述环境变量
 4. 部署项目
 
+## 注意事项
+
+### 关于Vercel函数执行时间
+
+本项目在`vercel.json`中配置了API路由的最大执行时间：
+
+```json
+{
+  "functions": {
+    "app/api/generate-images/route.ts": {
+      "maxDuration": 300
+    }
+  }
+}
+```
+
+请注意Vercel不同计划的函数执行时间限制：
+
+- **免费计划 (Hobby)**: 最大执行时间仅为**10秒**
+- **Pro计划**: 最大执行时间为**60秒**
+- **Enterprise计划**: 最大执行时间为**300秒**（5分钟）
+
+**重要提示**：如果您使用免费计划部署，无论`vercel.json`如何设置，函数执行时间都将被限制在10秒内。这可能导致复杂图像生成请求超时失败。
+
+解决方案：
+1. 升级到Pro或Enterprise计划
+2. 如果使用免费计划，建议在`vercel.json`中将`maxDuration`设置为`10`，以反映实际限制
+3. 简化提示词，使生成过程更快完成
+
+相关Vercel文档：[Functions (Serverless Functions) | Vercel Docs](https://vercel.com/docs/functions)
+
 ## 本地运行
 
 1. 克隆仓库并安装依赖：
